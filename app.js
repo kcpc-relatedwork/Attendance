@@ -6,9 +6,9 @@ const groups = [
         formUrl: "https://docs.google.com/forms/d/e/1FAIpQLScfbWO5f2JSMlnhIkSjsjD2Zb423WMGc2s_Kx9drn53-j-hcQ/viewform?usp=dialog",
         // The ID for the date field (optional - remove if you don't want auto-date)
         dateEntryId: "entry.2066914496"
-    }
-{
-        name: "1 실크웨이브 목장 (김의철)",
+    },
+    {
+        name: "2 포도나무",
         formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSdHnnuMT34cABWrxsfKwhWU5ANRY7B4VSkntXplC5uIT9AxLg/viewform?usp=dialog",
         dateEntryId: "entry.2066914496"
     },
@@ -53,4 +53,5 @@ groups.forEach(group => {
     };
 
     container.appendChild(button);
+
 });

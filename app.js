@@ -140,9 +140,8 @@ function saveAbsence() {
     closeModal();
 }
 
-// --- 8. SUBMIT LOGIC (The Batch Send) ---
+// --- 8. SUBMIT LOGIC (BATCH SEND) ---
 function submitAttendance() {
-    // Validation: Did they check everyone?
     const totalMembers = currentGroup.members.length;
     const markedMembers = Object.keys(attendanceSession).length;
 
@@ -153,42 +152,45 @@ function submitAttendance() {
     }
 
     const btn = document.querySelector('.btn-submit');
+    const originalText = btn.innerText;
     btn.innerText = "Sending...";
     btn.disabled = true;
 
-    // Send data one by one (Simple method to keep Apps Script same)
-    const promises = [];
-    
+    // 1. Prepare the Box (The Payload)
+    const dateText = document.getElementById('today-date').innerText;
+    const payload = [];
+
+    // Pack everyone into the box
     for (const [id, data] of Object.entries(attendanceSession)) {
         const member = currentGroup.members.find(m => m.id == id);
-        promises.push(sendToGoogleSheet(member.name, data.status, data.reason));
+        payload.push({
+            date: dateText,
+            name: member.name,
+            status: data.status,
+            reason: data.reason
+        });
     }
 
-    Promise.all(promises).then(() => {
-        alert("Attendance Saved Successfully!");
-        goHome();
-        btn.innerText = "✅ Submit Attendance";
-        btn.disabled = false;
-    }).catch(err => {
-        alert("Error saving data. Please try again.");
-        btn.innerText = "✅ Submit Attendance";
-        btn.disabled = false;
-    });
-}
-
-// Helper to talk to Google
-function sendToGoogleSheet(name, status, reason) {
-    const dateText = document.getElementById('today-date').innerText;
-    const data = { date: dateText, name: name, status: status, reason: reason };
-
-    return fetch(GOOGLE_SCRIPT_URL, {
+    // 2. Send the Box ONCE
+    fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, // Changed to text/plain to avoid CORS preflight issues
+        body: JSON.stringify({ attendanceList: payload })
+    }).then(() => {
+        alert("Attendance Saved Successfully!");
+        goHome();
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }).catch(err => {
+        console.error(err);
+        alert("Error saving data. Please try again.");
+        btn.innerText = originalText;
+        btn.disabled = false;
     });
 }
 
 // Start
 renderGroupButtons();
+
 

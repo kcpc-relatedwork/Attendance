@@ -1,106 +1,47 @@
-/* General Reset */
-body {
-    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-    background-color: #f0f2f5;
-    margin: 0;
-    padding-bottom: 50px;
-}
+/* --- FIXED MODAL STYLES --- */
 
-header {
-    background-color: #4a90e2;
-    color: white;
-    padding: 20px;
-    text-align: center;
-    position: sticky;
+/* 1. The modal is HIDDEN by default */
+.modal {
+    display: none; /* Changed from flex to none */
+    position: fixed;
     top: 0;
-    z-index: 100;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000; /* Ensure it sits on top of everything */
+    justify-content: center;
+    align-items: center;
 }
 
-header h1 { margin: 0; font-size: 1.5rem; }
+/* 2. We only show it when this class is added by JavaScript */
+.modal.show {
+    display: flex;
+}
 
-/* The Member Card */
-.member-card {
+.modal-content {
     background: white;
-    margin: 15px auto;
-    width: 90%;
-    max-width: 500px;
-    border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.card-top {
+textarea {
+    width: 100%;
+    height: 80px;
+    margin: 10px 0;
+    font-size: 1rem;
+    padding: 5px;
+    box-sizing: border-box; /* Keeps padding inside the box */
+}
+
+.modal-actions {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.name { font-size: 1.4rem; font-weight: bold; color: #333; }
-
-/* Call Button - Green Phone Icon */
-.btn-call {
-    text-decoration: none;
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-/* Attendance History Bar */
-.history-container {
-    margin-bottom: 15px;
-    background-color: #eee;
-    height: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-    display: flex;
-}
-.history-segment { height: 100%; border-right: 1px solid white; }
-.present-seg { background-color: #4caf50; }
-.absent-seg { background-color: #ef5350; }
-
-/* Action Buttons (Huge for easy tapping) */
-.action-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    justify-content: flex-end;
     gap: 10px;
 }
 
-.btn-attend, .btn-absent {
-    padding: 15px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-/* Default State */
-.btn-attend { background-color: #e0e0e0; color: #555; }
-.btn-absent { background-color: #e0e0e0; color: #555; }
-
-/* Active State (When clicked) */
-.btn-attend.active { background-color: #4caf50; color: white; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
-.btn-absent.active { background-color: #f44336; color: white; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
-
-/* Modal (Pop-up) Styles */
-.hidden { display: none; }
-.modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex; justify-content: center; align-items: center;
-}
-.modal-content {
-    background: white; padding: 20px; border-radius: 10px; width: 80%;
-}
-textarea { width: 100%; height: 80px; margin: 10px 0; font-size: 1rem; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
-.btn-save { background-color: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 5px; }
-.btn-cancel { background: #ddd; padding: 10px 20px; border: none; border-radius: 5px; }
+.btn-save { background-color: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold;}
+.btn-cancel { background: #ddd; color: #333; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold;}

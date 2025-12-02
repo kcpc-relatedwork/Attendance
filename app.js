@@ -94,8 +94,8 @@ function markAttendance(id, status) {
         openModal(id);
     }
 }
+// --- FIXED MODAL LOGIC ---
 
-// Modal Logic
 const modal = document.getElementById('absence-modal');
 const reasonInput = document.getElementById('absence-reason');
 const modalName = document.getElementById('modal-member-name');
@@ -103,15 +103,16 @@ const modalName = document.getElementById('modal-member-name');
 function openModal(id) {
     currentMemberId = id;
     const member = members.find(m => m.id === id);
-    modalName.innerText = `Why is ${member.name} absent?`;
+    modalName.innerText = `Absence Reason: ${member.name}`;
     reasonInput.value = ''; // Clear previous text
-    modal.classList.remove('hidden');
+    
+    // CHANGE: We now ADD the class 'show' to make it visible
+    modal.classList.add('show'); 
 }
 
 function closeModal() {
-    modal.classList.add('hidden');
-    // If they cancel, maybe remove the red highlight? 
-    // For now, we leave it to keep UI simple.
+    // CHANGE: We REMOVE the class 'show' to hide it
+    modal.classList.remove('show');
 }
 
 function saveAbsence() {
@@ -120,9 +121,13 @@ function saveAbsence() {
         // Show reason on the card
         const display = document.getElementById(`reason-display-${currentMemberId}`);
         display.innerText = `Reason: ${reason}`;
+        
+        // Optional: Mark the absent button as active if not already
+        document.getElementById(`btn-abs-${currentMemberId}`).classList.add('active');
     }
     closeModal();
 }
 
 // Initial Run
 renderMembers();
+

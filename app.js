@@ -1,3 +1,7 @@
+// --- 1. CONFIGURATION ---
+// PASTE YOUR GOOGLE SCRIPT URL HERE
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZIKC5xmseY0mkJAHNs8e_XJYcw1ctBRiryPBclcxKQHZvoMfAJtb2u8Gj5tp1wp8/exec"; 
+
 // --- 1. CONFIGURATION (EDIT THIS LIST) ---
 const members = [
     { 
@@ -87,7 +91,10 @@ function markAttendance(id, status) {
 
     if (status === 'present') {
         document.getElementById(`btn-att-${id}`).classList.add('active');
-        // In a real app, we would send "Present" to the database here
+
+        // NEW: Send "Present" to Google immediately
+        sendToGoogleSheet(id, "Present", "");
+        
     } else {
         document.getElementById(`btn-abs-${id}`).classList.add('active');
         // Open the Pop-up for reason
@@ -124,10 +131,45 @@ function saveAbsence() {
         
         // Optional: Mark the absent button as active if not already
         document.getElementById(`btn-abs-${currentMemberId}`).classList.add('active');
+    
+        // NEW: Send "Absent" + Reason to Google
+        sendToGoogleSheet(currentMemberId, "Absent", reason);
     }
     closeModal();
 }
 
 // Initial Run
 renderMembers();
+
+// --- SEND DATA TO GOOGLE SHEET ---
+function sendToGoogleSheet(memberId, status, reason = "") {
+    const member = members.find(m => m.id === memberId);
+    
+    // Get the current date text from the header
+    const dateText = document.getElementById('today-date').innerText;
+
+    // The data packet
+    const data = {
+        date: dateText,
+        name: member.name,
+        status: status,
+        reason: reason
+    };
+
+    // Send it!
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors", // Important: This prevents "Cross-Origin" errors
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    }).then(() => {
+        console.log("Sent to Google Sheet");
+        // Optional: Visual feedback (like a small checkmark) could go here
+    }).catch(error => {
+        console.error("Error:", error);
+        alert("Failed to save attendance. Check internet connection.");
+    });
+}
 

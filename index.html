@@ -8,17 +8,35 @@
 </head>
 <body>
     <header>
-        <h1>순 모임 출석부</h1> <p id="today-date"></p>
+        <h1 id="app-title">1 실크웨이브</h1>
+        <p id="today-date"></p>
     </header>
 
-    <main id="member-list">
-        </main>
+    <div id="view-groups" class="screen">
+        <h2>Select Your Group</h2>
+        <div id="group-buttons-container">
+            </div>
+    </div>
+
+    <div id="view-members" class="screen hidden">
+        <button onclick="goHome()" class="btn-back">← Back to Groups</button>
+        <h2 id="group-name-display"></h2>
+        
+        <div id="member-list">
+            </div>
+
+        <div class="submit-section">
+            <button onclick="submitAttendance()" class="btn-submit">
+                ✅ Submit Attendance
+            </button>
+        </div>
+    </div>
 
     <div id="absence-modal" class="modal">
         <div class="modal-content">
             <h3>결석 사유 (Reason)</h3>
             <p id="modal-member-name"></p>
-            <textarea id="absence-reason" placeholder="Please write reason here..."></textarea>
+            <textarea id="absence-reason" placeholder="Please write reason..."></textarea>
             <div class="modal-actions">
                 <button onclick="closeModal()" class="btn-cancel">Cancel</button>
                 <button onclick="saveAbsence()" class="btn-save">Save</button>
@@ -26,9 +44,10 @@
         </div>
     </div>
 
-    <script src="app.js?v=2.0"></script>
+    <script src="app.js?v=3.0"></script>
 </body>
 </html>
+
 
 
 

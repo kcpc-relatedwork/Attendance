@@ -1,57 +1,128 @@
-// CONFIGURATION: Add your groups here
-const groups = [
-    {
-        name: "1 실크웨이브 목장 (김의철)",
-        // The main link to the form (ends in viewform)
-        formUrl: "https://docs.google.com/forms/d/e/1FAIpQLScfbWO5f2JSMlnhIkSjsjD2Zb423WMGc2s_Kx9drn53-j-hcQ/viewform?usp=dialog",
-        // The ID for the date field (optional - remove if you don't want auto-date)
-        dateEntryId: "entry.2066914496"
+// --- 1. CONFIGURATION (EDIT THIS LIST) ---
+const members = [
+    { 
+        id: 1, 
+        name: "Elder Kim (김철수)", 
+        phone: "555-123-4567",
+        // 1 = Present, 0 = Absent (Last 12 weeks mock data)
+        history: [1,1,1,0,1,1,1,1,1,0,1,1] 
     },
-    {
-        name: "2 포도나무",
-        formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSdHnnuMT34cABWrxsfKwhWU5ANRY7B4VSkntXplC5uIT9AxLg/viewform?usp=dialog",
-        dateEntryId: "entry.2066914496"
+    { 
+        id: 2, 
+        name: "Deacon Lee (이영희)", 
+        phone: "555-987-6543",
+        history: [1,0,0,1,1,0,1,1,1,1,1,1] 
     },
-    ];
+    { 
+        id: 3, 
+        name: "Jason Park", 
+        phone: "555-555-5555",
+        history: [0,0,1,1,1,1,1,1,1,1,1,1] 
+    }
+];
 
-// 1. Display Today's Date in the Header
-const dateDisplay = document.getElementById('date-display');
+// --- 2. SETUP ---
+const container = document.getElementById('member-list');
+const dateElement = document.getElementById('today-date');
+
+// Set Date Header
 const today = new Date();
-const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-dateDisplay.innerText = today.toLocaleDateString('en-US', options);
+dateElement.innerText = today.toLocaleDateString('ko-KR', { 
+    year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' 
+});
 
-// 2. Helper function to format date as YYYY-MM-DD (Google Forms format)
-function getFormattedDate() {
-    const d = new Date();
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+// --- 3. RENDER THE LIST ---
+function renderMembers() {
+    container.innerHTML = ''; // Clear current list
+
+    members.forEach(member => {
+        // Create Card
+        const card = document.createElement('div');
+        card.className = 'member-card';
+
+        // 1. Generate History Bar (Visual Graph)
+        // This calculates the width of green/red segments based on history
+        let historyHTML = '<div class="history-container">';
+        member.history.forEach(status => {
+            const className = status === 1 ? 'present-seg' : 'absent-seg';
+            historyHTML += `<div class="history-segment ${className}" style="flex:1"></div>`;
+        });
+        historyHTML += '</div>';
+
+        // 2. Build Card HTML
+        card.innerHTML = `
+            <div class="card-top">
+                <span class="name">${member.name}</span>
+                <a href="tel:${member.phone}" class="btn-call">
+                    📞 Contact
+                </a>
+            </div>
+            
+            <div style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">Recent Attendance (3 months):</div>
+            ${historyHTML}
+
+            <div class="action-row">
+                <button id="btn-att-${member.id}" onclick="markAttendance(${member.id}, 'present')" class="btn-attend">
+                    출석 (Present)
+                </button>
+                <button id="btn-abs-${member.id}" onclick="markAttendance(${member.id}, 'absent')" class="btn-absent">
+                    결석 (Absent)
+                </button>
+            </div>
+            <div id="reason-display-${member.id}" style="margin-top:10px; color: red; font-style: italic;"></div>
+        `;
+
+        container.appendChild(card);
+    });
 }
 
-// 3. Render Buttons
-const container = document.getElementById('group-list');
+// --- 4. INTERACTION LOGIC ---
+let currentMemberId = null;
 
-groups.forEach(group => {
-    const button = document.createElement('button');
-    button.className = 'group-card';
-    button.innerText = group.name;
-    
-    button.onclick = () => {
-        let finalUrl = group.formUrl;
-        
-        // If we have a date ID, append the current date param
-        if (group.dateEntryId) {
-            const dateStr = getFormattedDate();
-            // Check if URL already has query params
-            const separator = finalUrl.includes('?') ? '&' : '?';
-            finalUrl += `${separator}${group.dateEntryId}=${dateStr}`;
-        }
-        
-        // Open in new tab (standard mobile behavior)
-        window.open(finalUrl, '_blank');
-    };
+function markAttendance(id, status) {
+    // Reset buttons visuals
+    document.getElementById(`btn-att-${id}`).classList.remove('active');
+    document.getElementById(`btn-abs-${id}`).classList.remove('active');
+    document.getElementById(`reason-display-${id}`).innerText = '';
 
-    container.appendChild(button);
+    if (status === 'present') {
+        document.getElementById(`btn-att-${id}`).classList.add('active');
+        // In a real app, we would send "Present" to the database here
+    } else {
+        document.getElementById(`btn-abs-${id}`).classList.add('active');
+        // Open the Pop-up for reason
+        openModal(id);
+    }
+}
 
-});
+// Modal Logic
+const modal = document.getElementById('absence-modal');
+const reasonInput = document.getElementById('absence-reason');
+const modalName = document.getElementById('modal-member-name');
+
+function openModal(id) {
+    currentMemberId = id;
+    const member = members.find(m => m.id === id);
+    modalName.innerText = `Why is ${member.name} absent?`;
+    reasonInput.value = ''; // Clear previous text
+    modal.classList.remove('hidden');
+}
+
+function closeModal() {
+    modal.classList.add('hidden');
+    // If they cancel, maybe remove the red highlight? 
+    // For now, we leave it to keep UI simple.
+}
+
+function saveAbsence() {
+    const reason = reasonInput.value;
+    if (currentMemberId) {
+        // Show reason on the card
+        const display = document.getElementById(`reason-display-${currentMemberId}`);
+        display.innerText = `Reason: ${reason}`;
+    }
+    closeModal();
+}
+
+// Initial Run
+renderMembers();

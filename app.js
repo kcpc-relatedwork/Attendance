@@ -1,5 +1,5 @@
 // --- 1. CONFIGURATION ---
-const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_URL_HERE"; // <--- PASTE YOUR URL
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZIKC5xmseY0mkJAHNs8e_XJYcw1ctBRiryPBclcxKQHZvoMfAJtb2u8Gj5tp1wp8/exec"; // <--- PASTE YOUR URL
 
 // DATA STRUCTURE: Groups containing Members
 const churchData = [
@@ -191,3 +191,4 @@ function sendToGoogleSheet(name, status, reason) {
 
 // Start
 renderGroupButtons();
+

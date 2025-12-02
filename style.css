@@ -1,29 +1,144 @@
-/* --- FIXED MODAL STYLES --- */
+/* =========================================
+   1. BASE STYLES (Layout, Fonts, Header)
+   ========================================= */
+body {
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the content */
+}
 
-/* 1. The modal is HIDDEN by default */
+header {
+    background-color: #4a90e2;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    width: 100%; /* Ensures header stretches full width */
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+header h1 { margin: 0; font-size: 1.5rem; }
+header p { margin: 5px 0 0; opacity: 0.9; font-size: 0.9rem; }
+
+/* =========================================
+   2. MEMBER CARD STYLES
+   ========================================= */
+main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the cards */
+}
+
+.member-card {
+    background: white;
+    margin: 15px 0;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.name { font-size: 1.3rem; font-weight: bold; color: #333; }
+
+/* Contact Button (Green Phone) */
+.btn-call {
+    text-decoration: none;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* History Bar (Visual Trend) */
+.history-container {
+    margin-bottom: 15px;
+    background-color: #eee;
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    width: 100%;
+}
+.history-segment { height: 100%; border-right: 1px solid white; }
+.present-seg { background-color: #4caf50; }
+.absent-seg { background-color: #ef5350; }
+
+/* =========================================
+   3. BIG BUTTONS (Attendance)
+   ========================================= */
+.action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn-attend, .btn-absent {
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+/* Default State (Gray) */
+.btn-attend { background-color: #e0e0e0; color: #555; }
+.btn-absent { background-color: #e0e0e0; color: #555; }
+
+/* Active State (Green/Red when clicked) */
+.btn-attend.active { background-color: #4caf50; color: white; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
+.btn-absent.active { background-color: #f44336; color: white; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
+
+/* =========================================
+   4. MODAL POP-UP (The Fixed Version)
+   ========================================= */
 .modal {
-    display: none; /* Changed from flex to none */
+    display: none; /* Hidden by default */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.5);
-    z-index: 1000; /* Ensure it sits on top of everything */
+    z-index: 1000;
     justify-content: center;
     align-items: center;
 }
 
-/* 2. We only show it when this class is added by JavaScript */
+/* Only show when JS adds this class */
 .modal.show {
-    display: flex;
+    display: flex; 
 }
 
 .modal-content {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    width: 80%;
+    width: 85%;
     max-width: 400px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
@@ -31,10 +146,13 @@
 textarea {
     width: 100%;
     height: 80px;
-    margin: 10px 0;
+    margin: 15px 0;
     font-size: 1rem;
-    padding: 5px;
-    box-sizing: border-box; /* Keeps padding inside the box */
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: inherit;
 }
 
 .modal-actions {
@@ -43,5 +161,5 @@ textarea {
     gap: 10px;
 }
 
-.btn-save { background-color: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold;}
-.btn-cancel { background: #ddd; color: #333; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold;}
+.btn-save { background-color: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; font-size: 1rem; }
+.btn-cancel { background: #ddd; color: #333; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; font-size: 1rem; }

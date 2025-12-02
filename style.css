@@ -163,3 +163,81 @@ textarea {
 
 .btn-save { background-color: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; font-size: 1rem; }
 .btn-cancel { background: #ddd; color: #333; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; font-size: 1rem; }
+
+/* Add to your existing CSS */
+
+/* Screen Switching */
+.screen {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.hidden { display: none !important; }
+
+/* Group Buttons (Lobby) */
+#group-buttons-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    width: 90%;
+    max-width: 400px;
+    margin-top: 20px;
+}
+
+.btn-group {
+    background: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4a90e2;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.1s;
+}
+
+.btn-group:active { transform: scale(0.98); background: #f9f9f9; }
+
+/* Back Button */
+.btn-back {
+    align-self: flex-start;
+    margin: 10px 0 0 20px;
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* Submit Section */
+.submit-section {
+    width: 100%;
+    padding: 20px;
+    background: white;
+    position: sticky;
+    bottom: 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+}
+
+.btn-submit {
+    background-color: #2c3e50; /* Dark Blue */
+    color: white;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 30px;
+    width: 90%;
+    max-width: 400px;
+    font-weight: bold;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

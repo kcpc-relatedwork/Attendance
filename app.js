@@ -51,10 +51,19 @@ function renderGroupButtons() {
     });
 }
 
-// --- 4. NAVIGATION ---
+// --- 4. NAVIGATION (Updated with Memory) ---
 function openGroup(index) {
     currentGroup = churchData[index];
-    attendanceSession = {}; // Reset choices
+    
+    // NEW: Try to load today's saved session from phone memory
+    // (This requires the helper function added in Change C)
+    const savedSession = localStorage.getItem('attendance_cache_' + getTodayDateString());
+    
+    if (savedSession) {
+        attendanceSession = JSON.parse(savedSession);
+    } else {
+        attendanceSession = {}; // No memory for today, start fresh
+    }
     
     // Switch Screens
     document.getElementById('view-groups').classList.add('hidden');
@@ -199,6 +208,7 @@ function submitAttendance() {
 }
 
 // Start
+
 
 
 

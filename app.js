@@ -210,7 +210,19 @@ function submitAttendance() {
     });
 }
 
+// --- MEMORY HELPERS ---
+function saveLocalMemory() {
+    localStorage.setItem('attendance_cache_' + getTodayDateString(), JSON.stringify(attendanceSession));
+}
+
+function getTodayDateString() {
+    // Returns simple key like "2023-12-05" to identify today
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
 // Start
+
 
 
 

@@ -80,7 +80,7 @@ function goHome() {
     document.getElementById('view-members').classList.add('hidden');
 }
 
-// --- 5. RENDER MEMBERS ---
+// --- 5. RENDER MEMBERS (Updated with Memory Check) ---
 function renderMembers() {
     const container = document.getElementById('member-list');
     container.innerHTML = '';
@@ -89,13 +89,35 @@ function renderMembers() {
         const card = document.createElement('div');
         card.className = 'member-card';
         
-        // History Graph Logic
+        // 1. History Graph Logic (Same as before)
         let historyHTML = '<div class="history-container">';
         member.history.forEach(h => {
             historyHTML += `<div class="history-segment ${h ? 'present-seg' : 'absent-seg'}" style="flex:1"></div>`;
         });
         historyHTML += '</div>';
 
+        // 2. CHECK MEMORY (NEW PART)
+        // We check if this person has a saved status in our local memory
+        const savedData = attendanceSession[member.id];
+        
+        // Default classes (gray buttons)
+        let presentClass = 'btn-attend';
+        let absentClass = 'btn-absent';
+        let reasonText = '';
+
+        // If we found memory, turn the correct button Green or Red immediately
+        if (savedData) {
+            if (savedData.status === 'Present') {
+                presentClass += ' active'; // Adds green style
+            }
+            if (savedData.status === 'Absent') {
+                absentClass += ' active'; // Adds red style
+                // Also restore the reason text if it exists
+                reasonText = savedData.reason ? `Reason: ${savedData.reason}` : '';
+            }
+        }
+
+        // 3. Build Card HTML (Updated to use the variables above)
         card.innerHTML = `
             <div class="card-top">
                 <span class="name">${member.name}</span>
@@ -103,10 +125,10 @@ function renderMembers() {
             </div>
             ${historyHTML}
             <div class="action-row">
-                <button id="btn-att-${member.id}" onclick="selectStatus(${member.id}, 'Present')" class="btn-attend">출석</button>
-                <button id="btn-abs-${member.id}" onclick="selectStatus(${member.id}, 'Absent')" class="btn-absent">결석</button>
+                <button id="btn-att-${member.id}" onclick="selectStatus(${member.id}, 'Present')" class="${presentClass}">출석</button>
+                <button id="btn-abs-${member.id}" onclick="selectStatus(${member.id}, 'Absent')" class="${absentClass}">결석</button>
             </div>
-            <div id="reason-display-${member.id}" style="margin-top:10px; color: red; font-style: italic;"></div>
+            <div id="reason-display-${member.id}" style="margin-top:10px; color: red; font-style: italic;">${reasonText}</div>
         `;
         container.appendChild(card);
     });
@@ -222,6 +244,7 @@ function getTodayDateString() {
 }
 
 // Start
+
 
 
 

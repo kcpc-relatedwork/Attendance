@@ -112,21 +112,24 @@ function renderMembers() {
     });
 }
 
-// --- 6. SELECTION LOGIC (Changes color, saves to memory) ---
+// --- 6. SELECTION LOGIC ---
 function selectStatus(id, status) {
-    // UI Update
+    // ... (Your existing UI code for removing classes) ...
     document.getElementById(`btn-att-${id}`).classList.remove('active');
     document.getElementById(`btn-abs-${id}`).classList.remove('active');
 
     if (status === 'Present') {
         document.getElementById(`btn-att-${id}`).classList.add('active');
-        // Save to memory
         attendanceSession[id] = { status: 'Present', reason: '' };
         document.getElementById(`reason-display-${id}`).innerText = '';
     } else {
         document.getElementById(`btn-abs-${id}`).classList.add('active');
-        openModal(id); // Logic to capture reason
+        openModal(id);
     }
+    
+    // NEW: Save to Phone Memory immediately
+    saveLocalMemory();
+}
 }
 
 // --- 7. MODAL LOGIC ---
@@ -208,6 +211,7 @@ function submitAttendance() {
 }
 
 // Start
+
 
 
 

@@ -1,23 +1,31 @@
 // --- 1. CONFIGURATION ---
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZIKC5xmseY0mkJAHNs8e_XJYcw1ctBRiryPBclcxKQHZvoMfAJtb2u8Gj5tp1wp8/exec"; // <--- PASTE YOUR URL
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZIKC5xmseY0mkJAHNs8e_XJYcw1ctBRiryPBclcxKQHZvoMfAJtb2u8Gj5tp1wp8/exec"; // Keep your existing URL
 
-// DATA STRUCTURE: Groups containing Members
-const churchData = [
-    {
-        groupName: "1 실크웨이브",
-        members: [
-            { id: 101, name: "Kim (김철수)", phone: "555-0001", history: [1,1,1] },
-            { id: 102, name: "Lee (이영희)", phone: "555-0002", history: [0,1,1] }
-        ]
-    },
-    {
-        groupName: "2 포도나무",
-        members: [
-            { id: 201, name: "Park (박지성)", phone: "555-0003", history: [1,1,0] },
-            { id: 202, name: "Choi (최민수)", phone: "555-0004", history: [1,1,1] }
-        ]
+// REMOVE THE HARDCODED "const churchData = [...]"
+// We will fill this variable from the cloud now.
+let churchData = []; 
+
+// --- 2. INITIALIZATION (LOAD DATA) ---
+async function initApp() {
+    // Show Loading State
+    const container = document.getElementById('group-buttons-container');
+    container.innerHTML = '<p style="text-align:center; margin-top:20px;">Downloading Roster...<br>(This may take a few seconds)</p>';
+
+    try {
+        const response = await fetch(GOOGLE_SCRIPT_URL);
+        const data = await response.json();
+        
+        churchData = data; // Save the cloud data to our variable
+        renderGroupButtons(); // Now draw the buttons
+        
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = '<p style="color:red; text-align:center;">Error loading data.<br>Check internet connection.</p>';
     }
-];
+}
+
+// Start the App
+initApp();
 
 // --- 2. STATE MANAGEMENT ---
 let currentGroup = null; // Which group are we looking at?
@@ -192,6 +200,7 @@ function submitAttendance() {
 
 // Start
 renderGroupButtons();
+
 
 
 

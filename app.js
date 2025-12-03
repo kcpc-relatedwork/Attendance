@@ -9,7 +9,7 @@ let churchData = [];
 async function initApp() {
     // Show Loading State
     const container = document.getElementById('group-buttons-container');
-    container.innerHTML = '<p style="text-align:center; margin-top:20px;">Downloading Roster...<br>(This may take a few seconds)</p>';
+    container.innerHTML = '<p style="text-align:center; margin-top:20px;">목장을 불러오고 있습니다...<br>(잠시만 기달려주세요)</p>';
 
     try {
         const response = await fetch(GOOGLE_SCRIPT_URL);
@@ -199,6 +199,7 @@ function submitAttendance() {
 }
 
 // Start
+
 
 
 

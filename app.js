@@ -152,7 +152,6 @@ function selectStatus(id, status) {
     // NEW: Save to Phone Memory immediately
     saveLocalMemory();
 }
-}
 
 // --- 7. MODAL LOGIC ---
 const modal = document.getElementById('absence-modal');
@@ -244,6 +243,7 @@ function getTodayDateString() {
 }
 
 // Start
+
 
 
 

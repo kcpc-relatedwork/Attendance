@@ -199,7 +199,7 @@ function submitAttendance() {
 }
 
 // Start
-renderGroupButtons();
+
 
 
 

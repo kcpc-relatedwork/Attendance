@@ -279,21 +279,3 @@ function getTodayDateString() {
 }
 
 // Start
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

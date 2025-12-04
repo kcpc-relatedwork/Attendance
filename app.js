@@ -210,7 +210,7 @@ function submitAttendance() {
 
     const btn = document.querySelector('.btn-submit');
     const originalText = btn.innerText;
-    btn.innerText = "Sending...";
+    btn.innerText = "보내는중...";
     btn.disabled = true;
 
     // 1. Prepare the Box (The Payload)
@@ -279,6 +279,7 @@ function getTodayDateString() {
 }
 
 // Start
+
 
 
 

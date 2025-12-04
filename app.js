@@ -219,7 +219,7 @@ function submitAttendance() {
         headers: { "Content-Type": "text/plain;charset=utf-8" }, // Changed to text/plain to avoid CORS preflight issues
         body: JSON.stringify({ attendanceList: payload })
     }).then(() => {
-        alert("Attendance Saved Successfully!");
+        alert("출석체크를 성공적으로 보냈습니다!");
         goHome();
         btn.innerText = originalText;
         btn.disabled = false;
@@ -263,6 +263,7 @@ function getTodayDateString() {
 }
 
 // Start
+
 
 
 

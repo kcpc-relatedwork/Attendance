@@ -230,6 +230,26 @@ function submitAttendance() {
         btn.disabled = false;
     });
 }
+// --- MARK ALL LOGIC ---
+function markAllPresent() {
+    if (!currentGroup) return;
+
+    let changeCount = 0;
+
+    currentGroup.members.forEach(member => {
+        // Check if this person is already marked (Present OR Absent)
+        // We only want to fill in the empty ones (undefined)
+        if (!attendanceSession[member.id]) {
+            // We reuse the existing function so it handles saving & visuals automatically
+            selectStatus(member.id, 'Present');
+            changeCount++;
+        }
+    });
+
+    if (changeCount === 0) {
+        alert("Everyone is already marked!");
+    }
+}
 
 // --- MEMORY HELPERS ---
 function saveLocalMemory() {
@@ -243,6 +263,7 @@ function getTodayDateString() {
 }
 
 // Start
+
 
 
 

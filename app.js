@@ -151,7 +151,26 @@ function selectStatus(id, status) {
     saveLocalMemory();
 }
 
-// --- 8. MODAL LOGIC ---
+// --- 8. MARK ALL LOGIC (Restored!) ---
+function markAllPresent() {
+    if (!currentGroup) return;
+
+    let changeCount = 0;
+
+    currentGroup.members.forEach(member => {
+        // Only mark if they haven't been marked yet
+        if (!attendanceSession[member.id]) {
+            selectStatus(member.id, 'Present');
+            changeCount++;
+        }
+    });
+
+    if (changeCount === 0) {
+        alert("모든 인원이 이미 체크되었습니다.");
+    }
+}
+
+// --- 9. MODAL LOGIC ---
 const modal = document.getElementById('absence-modal');
 const reasonInput = document.getElementById('absence-reason');
 const modalName = document.getElementById('modal-member-name');
@@ -179,7 +198,7 @@ function saveAbsence() {
     closeModal();
 }
 
-// --- 9. SUBMIT LOGIC ---
+// --- 10. SUBMIT LOGIC ---
 function submitAttendance() {
     const totalMembers = currentGroup.members.length;
     const markedMembers = Object.keys(attendanceSession).length;
@@ -226,7 +245,7 @@ function submitAttendance() {
     });
 }
 
-// --- 10. HELPERS ---
+// --- 11. HELPERS ---
 function saveLocalMemory() {
     localStorage.setItem('attendance_cache_' + getTodayDateString(), JSON.stringify(attendanceSession));
 }

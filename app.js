@@ -1,13 +1,11 @@
 // --- 1. CONFIGURATION ---
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZIKC5xmseY0mkJAHNs8e_XJYcw1ctBRiryPBclcxKQHZvoMfAJtb2u8Gj5tp1wp8/exec"; // Keep your existing URL
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZIKC5xmseY0mkJAHNs8e_XJYcw1ctBRiryPBclcxKQHZvoMfAJtb2u8Gj5tp1wp8/exec"; 
 
-// REMOVE THE HARDCODED "const churchData = [...]"
-// We will fill this variable from the cloud now.
+// Container for our data
 let churchData = []; 
 
 // --- 2. INITIALIZATION (LOAD DATA) ---
 async function initApp() {
-    // Show Loading State
     const container = document.getElementById('group-buttons-container');
     container.innerHTML = '<p style="text-align:center; margin-top:20px;">목장을 불러오고 있습니다...<br>(잠시만 기달려주세요)</p>';
 
@@ -15,21 +13,21 @@ async function initApp() {
         const response = await fetch(GOOGLE_SCRIPT_URL);
         const data = await response.json();
         
-        churchData = data; // Save the cloud data to our variable
-        renderGroupButtons(); // Now draw the buttons
+        churchData = data; 
+        renderGroupButtons(); 
         
     } catch (error) {
         console.error(error);
-        container.innerHTML = '<p style="color:red; text-align:center;">Error loading data.<br>Check internet connection.</p>';
+        container.innerHTML = '<p style="color:red; text-align:center;">데이터를 불러오지 못했습니다.<br>인터넷 연결을 확인해주세요.</p>';
     }
 }
 
 // Start the App
 initApp();
 
-// --- 2. STATE MANAGEMENT ---
-let currentGroup = null; // Which group are we looking at?
-let attendanceSession = {}; // Stores the choices: { 101: {status: 'Present', reason: ''} }
+// --- 3. STATE MANAGEMENT ---
+let currentGroup = null; 
+let attendanceSession = {}; 
 
 // Setup Date
 const today = new Date();
@@ -37,12 +35,12 @@ document.getElementById('today-date').innerText = today.toLocaleDateString('ko-K
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' 
 });
 
-// --- 3. INITIALIZATION (LOBBY - Updated with Checkmarks) ---
+// --- 4. RENDER GROUP BUTTONS (LOBBY) ---
 function renderGroupButtons() {
     const container = document.getElementById('group-buttons-container');
     container.innerHTML = '';
     
-    // 1. Peek into memory to see what we did today
+    // Peek into memory
     const savedSessionStr = localStorage.getItem('attendance_cache_' + getTodayDateString());
     const savedSession = savedSessionStr ? JSON.parse(savedSessionStr) : {};
 
@@ -50,42 +48,34 @@ function renderGroupButtons() {
         const btn = document.createElement('button');
         btn.className = 'btn-group';
         
-        // 2. Check: Did we mark ANY member of this group today?
-        // We look through the group's members and see if their ID exists in our saved session
+        // Check if started
         const isStarted = group.members.some(member => savedSession[member.id]);
 
-        // 3. Decide: Show Green Check ✅ or Gray Arrow ›
         const statusIcon = isStarted 
             ? '<span style="color:#28a745; font-size:1.5rem;">✅</span>' 
             : '<span style="color:#ccc; font-size:2rem; line-height:0;">›</span>';
 
-        // 4. Draw the button with the icon
         btn.innerHTML = `<span>${group.groupName}</span> ${statusIcon}`;
-        
         btn.onclick = () => openGroup(index);
         container.appendChild(btn);
     });
 }
 
-// --- 4. NAVIGATION (Updated with Memory) ---
+// --- 5. NAVIGATION ---
 function openGroup(index) {
     currentGroup = churchData[index];
     
-    // NEW: Try to load today's saved session from phone memory
-    // (This requires the helper function added in Change C)
+    // Load Memory
     const savedSession = localStorage.getItem('attendance_cache_' + getTodayDateString());
-    
     if (savedSession) {
         attendanceSession = JSON.parse(savedSession);
     } else {
-        attendanceSession = {}; // No memory for today, start fresh
+        attendanceSession = {}; 
     }
     
     // Switch Screens
     document.getElementById('view-groups').classList.add('hidden');
     document.getElementById('view-members').classList.remove('hidden');
-    
-    // Set Header
     document.getElementById('group-name-display').innerText = currentGroup.groupName;
     
     renderMembers();
@@ -94,9 +84,11 @@ function openGroup(index) {
 function goHome() {
     document.getElementById('view-groups').classList.remove('hidden');
     document.getElementById('view-members').classList.add('hidden');
+    // Refresh buttons to show checkmarks
+    renderGroupButtons();
 }
 
-// --- 5. RENDER MEMBERS (Updated with Memory Check) ---
+// --- 6. RENDER MEMBER LIST ---
 function renderMembers() {
     const container = document.getElementById('member-list');
     container.innerHTML = '';
@@ -105,35 +97,27 @@ function renderMembers() {
         const card = document.createElement('div');
         card.className = 'member-card';
         
-        // 1. History Graph Logic (Same as before)
+        // History Graph
         let historyHTML = '<div class="history-container">';
         member.history.forEach(h => {
             historyHTML += `<div class="history-segment ${h ? 'present-seg' : 'absent-seg'}" style="flex:1"></div>`;
         });
         historyHTML += '</div>';
 
-        // 2. CHECK MEMORY (NEW PART)
-        // We check if this person has a saved status in our local memory
+        // Check Memory
         const savedData = attendanceSession[member.id];
-        
-        // Default classes (gray buttons)
         let presentClass = 'btn-attend';
         let absentClass = 'btn-absent';
         let reasonText = '';
 
-        // If we found memory, turn the correct button Green or Red immediately
         if (savedData) {
-            if (savedData.status === 'Present') {
-                presentClass += ' active'; // Adds green style
-            }
+            if (savedData.status === 'Present') presentClass += ' active';
             if (savedData.status === 'Absent') {
-                absentClass += ' active'; // Adds red style
-                // Also restore the reason text if it exists
-                reasonText = savedData.reason ? `Reason: ${savedData.reason}` : '';
+                absentClass += ' active';
+                reasonText = savedData.reason ? `사유: ${savedData.reason}` : '';
             }
         }
 
-        // 3. Build Card HTML (Updated to use the variables above)
         card.innerHTML = `
             <div class="card-top">
                 <span class="name">${member.name}</span>
@@ -144,15 +128,14 @@ function renderMembers() {
                 <button id="btn-att-${member.id}" onclick="selectStatus(${member.id}, 'Present')" class="${presentClass}">출석</button>
                 <button id="btn-abs-${member.id}" onclick="selectStatus(${member.id}, 'Absent')" class="${absentClass}">결석</button>
             </div>
-            <div id="reason-display-${member.id}" style="margin-top:10px; color: red; font-style: italic;">${reasonText}</div>
+            <div id="reason-display-${member.id}" style="margin-top:10px; color: #d9534f; font-weight:bold;">${reasonText}</div>
         `;
         container.appendChild(card);
     });
 }
 
-// --- 6. SELECTION LOGIC ---
+// --- 7. SELECTION LOGIC ---
 function selectStatus(id, status) {
-    // ... (Your existing UI code for removing classes) ...
     document.getElementById(`btn-att-${id}`).classList.remove('active');
     document.getElementById(`btn-abs-${id}`).classList.remove('active');
 
@@ -165,11 +148,10 @@ function selectStatus(id, status) {
         openModal(id);
     }
     
-    // NEW: Save to Phone Memory immediately
     saveLocalMemory();
 }
 
-// --- 7. MODAL LOGIC ---
+// --- 8. MODAL LOGIC ---
 const modal = document.getElementById('absence-modal');
 const reasonInput = document.getElementById('absence-reason');
 const modalName = document.getElementById('modal-member-name');
@@ -185,25 +167,25 @@ function openModal(id) {
 
 function closeModal() {
     modal.classList.remove('show');
-    // If closed without saving, maybe reset button? For now, we leave it.
 }
 
 function saveAbsence() {
     const reason = reasonInput.value;
     if (currentModalId) {
         attendanceSession[currentModalId] = { status: 'Absent', reason: reason };
-        document.getElementById(`reason-display-${currentModalId}`).innerText = `Reason: ${reason}`;
+        document.getElementById(`reason-display-${currentModalId}`).innerText = `사유: ${reason}`;
+        saveLocalMemory();
     }
     closeModal();
 }
 
-// --- 8. SUBMIT LOGIC (BATCH SEND) ---
+// --- 9. SUBMIT LOGIC ---
 function submitAttendance() {
     const totalMembers = currentGroup.members.length;
     const markedMembers = Object.keys(attendanceSession).length;
 
     if (markedMembers < totalMembers) {
-        if(!confirm(`You only marked ${markedMembers} out of ${totalMembers} people. Submit anyway?`)) {
+        if(!confirm(`아직 ${totalMembers - markedMembers}명이 체크되지 않았습니다. 그래도 제출하시겠습니까?`)) {
             return;
         }
     }
@@ -213,11 +195,9 @@ function submitAttendance() {
     btn.innerText = "보내는중...";
     btn.disabled = true;
 
-    // 1. Prepare the Box (The Payload)
     const dateText = document.getElementById('today-date').innerText;
     const payload = [];
 
-    // Pack everyone into the box
     for (const [id, data] of Object.entries(attendanceSession)) {
         const member = currentGroup.members.find(m => m.id == id);
         payload.push({
@@ -228,54 +208,30 @@ function submitAttendance() {
         });
     }
 
-    // 2. Send the Box ONCE
     fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" }, // Changed to text/plain to avoid CORS preflight issues
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ attendanceList: payload })
     }).then(() => {
-        alert("출석체크를 성공적으로 보냈습니다!");
+        alert("출석체크 완료!");
         goHome();
         btn.innerText = originalText;
         btn.disabled = false;
     }).catch(err => {
         console.error(err);
-        alert("오류가 발생했습니다. \n나중에 다시해 주시기 바랍니다.");
+        alert("오류 발생. 다시 시도해주세요.");
         btn.innerText = originalText;
         btn.disabled = false;
     });
 }
-// --- MARK ALL LOGIC ---
-function markAllPresent() {
-    if (!currentGroup) return;
 
-    let changeCount = 0;
-
-    currentGroup.members.forEach(member => {
-        // Check if this person is already marked (Present OR Absent)
-        // We only want to fill in the empty ones (undefined)
-        if (!attendanceSession[member.id]) {
-            // We reuse the existing function so it handles saving & visuals automatically
-            selectStatus(member.id, 'Present');
-            changeCount++;
-        }
-    });
-
-    if (changeCount === 0) {
-        alert("Everyone is already marked!");
-    }
-}
-
-// --- MEMORY HELPERS ---
+// --- 10. HELPERS ---
 function saveLocalMemory() {
     localStorage.setItem('attendance_cache_' + getTodayDateString(), JSON.stringify(attendanceSession));
 }
 
 function getTodayDateString() {
-    // Returns simple key like "2023-12-05" to identify today
     const d = new Date();
     return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
 }
-
-// Start

@@ -225,7 +225,7 @@ function submitAttendance() {
         btn.disabled = false;
     }).catch(err => {
         console.error(err);
-        alert("Error saving data. Please try again.");
+        alert("오류가 발생했습니다. \n나중에 다시해 주시기 바랍니다.");
         btn.innerText = originalText;
         btn.disabled = false;
     });
@@ -263,6 +263,7 @@ function getTodayDateString() {
 }
 
 // Start
+
 
 
 

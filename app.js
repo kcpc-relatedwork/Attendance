@@ -37,15 +37,31 @@ document.getElementById('today-date').innerText = today.toLocaleDateString('ko-K
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' 
 });
 
-// --- 3. INITIALIZATION (LOBBY) ---
+// --- 3. INITIALIZATION (LOBBY - Updated with Checkmarks) ---
 function renderGroupButtons() {
     const container = document.getElementById('group-buttons-container');
     container.innerHTML = '';
     
+    // 1. Peek into memory to see what we did today
+    const savedSessionStr = localStorage.getItem('attendance_cache_' + getTodayDateString());
+    const savedSession = savedSessionStr ? JSON.parse(savedSessionStr) : {};
+
     churchData.forEach((group, index) => {
         const btn = document.createElement('button');
         btn.className = 'btn-group';
-        btn.innerText = group.groupName;
+        
+        // 2. Check: Did we mark ANY member of this group today?
+        // We look through the group's members and see if their ID exists in our saved session
+        const isStarted = group.members.some(member => savedSession[member.id]);
+
+        // 3. Decide: Show Green Check ✅ or Gray Arrow ›
+        const statusIcon = isStarted 
+            ? '<span style="color:#28a745; font-size:1.5rem;">✅</span>' 
+            : '<span style="color:#ccc; font-size:2rem; line-height:0;">›</span>';
+
+        // 4. Draw the button with the icon
+        btn.innerHTML = `<span>${group.groupName}</span> ${statusIcon}`;
+        
         btn.onclick = () => openGroup(index);
         container.appendChild(btn);
     });
@@ -263,6 +279,7 @@ function getTodayDateString() {
 }
 
 // Start
+
 
 
 
